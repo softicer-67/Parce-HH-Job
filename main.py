@@ -1,7 +1,9 @@
+from typing import List
+
 from classes import HH, Superjob
 
 
-def main():
+def main() -> None:
     while True:
         try:
             res = []
@@ -13,10 +15,10 @@ def main():
             if user_input == '1':
                 option = input('Введите слово для поиска вакансии: ')
                 pages = int(input('Колличество вакансий: '))
-                opt_1 = HH(option, pages)
-                opt_1.get_request()
+                cls_1 = HH(option, pages)
+                cls_1.get_request()
             elif user_input == '2':
-                file = opt_1.load_file()
+                file = cls_1.load_file()
                 print(file)
             elif user_input == '3':
                res.append(file.rstrip('\n'))
@@ -26,8 +28,8 @@ def main():
             elif user_input == '4':
                 option = input('Введите слово для поиска вакансии: ')
                 pages = int(input('Колличество вакансий: \n'))
-                opt_2 = Superjob(option, pages)
-                file = opt_2.get_request()
+                cls_2 = Superjob(option, pages)
+                file = cls_2.get_request()
             elif user_input == '5':
                 for k, v in file.items():
                     try:

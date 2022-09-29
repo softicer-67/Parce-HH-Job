@@ -1,7 +1,10 @@
 import json
 from abc import ABC, abstractmethod
+from typing import Dict, Any
+
 import requests
 from bs4 import BeautifulSoup as bs
+from mypy.api import List
 
 
 class Engine(ABC):
@@ -16,8 +19,8 @@ class HH(Engine):
         self.options = options
         self.pages = pages
 
-    def get_request(self):
-        hh_data = {}
+    def get_request(self) -> dict:
+        hh_data: Dict[str, Any] = {}
         for page in range(self.pages):
             with open('hh_data.json', 'w', encoding='utf-8') as f:
                 json.dump(hh_data, f, indent=4, ensure_ascii=False)
@@ -61,11 +64,11 @@ class HH(Engine):
 
 
 class Superjob(Engine):
-    def __init__(self, options, pages):
+    def __init__(self, options: str, pages: int):
         self.pages = pages
         self.options = options
 
-    def get_request(self):
+    def get_request(self) -> dict:
         super_data = {}
         for page in range(self.pages):
             http = 'https://www.superjob.ru'
