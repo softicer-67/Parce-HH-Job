@@ -12,10 +12,11 @@ class Engine(ABC):
 
 
 class HH(Engine):
-    def get_request(self, options=None, pages=0):
+    def __init__(self, options=None, pages=0):
         self.options = options
         self.pages = pages
-        super().get_request()
+
+    def get_request(self):
         hh_data = {}
         for page in range(self.pages):
             with open('hh_data.json', 'w', encoding='utf-8') as f:
@@ -60,22 +61,22 @@ class HH(Engine):
 
 
 class Superjob(Engine):
-    def get_request(self):
-        super().get_request()
+    def __init__(self, options, pages):
+        self.pages = pages
+        self.options = options
 
-    @staticmethod
-    def load_file_2(options, pages):
+    def get_request(self):
         super_data = {}
-        for page in range(pages):
+        for page in range(self.pages):
             http = 'https://www.superjob.ru'
-            url = f'https://russia.superjob.ru/vacancy/search/?keywords={options}&page={page}'
+            url = f'https://russia.superjob.ru/vacancy/search/?keywords={self.options}&page={page}'
             print(f'[+] Парсим superjob.ru Please wait ... {page + 1}')
             response = requests.get(url)
             soup = bs(response.text, 'lxml')
             title = soup.find_all('span', class_='_9fIP1 _249GZ _1jb_5 QLdOc')
             salary = soup.find_all('span', class_='_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi')
             desc = soup.find_all('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky')
-            for i in range(pages):
+            for i in range(self.pages):
                 try:
                     super_data[i] = {
                             'title': title[i].text,

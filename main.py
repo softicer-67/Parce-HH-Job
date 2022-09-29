@@ -2,7 +2,6 @@ from classes import HH, Superjob
 
 
 def main():
-    global opt_1, file
     while True:
         try:
             res = []
@@ -14,8 +13,8 @@ def main():
             if user_input == '1':
                 option = input('Введите слово для поиска вакансии: ')
                 pages = int(input('Колличество вакансий: '))
-                opt_1 = HH()
-                opt_1.get_request(option, pages)
+                opt_1 = HH(option, pages)
+                opt_1.get_request()
             elif user_input == '2':
                 file = opt_1.load_file()
                 print(file)
@@ -27,8 +26,8 @@ def main():
             elif user_input == '4':
                 option = input('Введите слово для поиска вакансии: ')
                 pages = int(input('Колличество вакансий: \n'))
-                opt_2 = Superjob()
-                file = opt_2.load_file_2(option, pages)
+                opt_2 = Superjob(option, pages)
+                file = opt_2.get_request()
             elif user_input == '5':
                 for k, v in file.items():
                     try:
