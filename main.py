@@ -15,6 +15,7 @@ def main() -> None:
             case '2':
                 data = output_hh()
                 print('\n'.join(data))
+                print('-' * 150)
             case '3':
                 data = output_hh()
                 res = '\n'.join(data)
@@ -33,6 +34,7 @@ def main() -> None:
             case '6':
                 data1 = output_sj()
                 print('\n'.join(data1))
+                print('-' * 150)
             case '7':
                 data1 = output_sj()
                 res = '\n'.join(data1)

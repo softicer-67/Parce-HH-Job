@@ -22,8 +22,9 @@ class HH(Engine):
 
 
 class Superjob(Engine):
-    def __init__(self, request_name):
+    def __init__(self, request_name, quantity):
         self.name = request_name
+        self.iter = int(quantity / 40)
         self.url = 'http://russia.superjob.ru/vacancy/search/'
 
     def get_request(self, page_num):

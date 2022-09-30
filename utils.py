@@ -1,6 +1,3 @@
-import json
-
-import requests
 from bs4 import BeautifulSoup
 from classes import *
 
@@ -10,21 +7,24 @@ def get_hh_vacs(req_text: str, how_many: int) -> None:
     current_data = json.loads(
             requests.get(f"https://api.hh.ru/vacancies?text={req_text}&per_page={how_many}").text)
     for item in current_data['items']:
-        vacancies[item['id']] = {
-            'title': item['name'].lower(),
-            'url': item['alternate_url'],
-            'salary': item['salary'],
-            'description': str(item['snippet']['requirement']).replace('<highlighttext>', '').replace(
-                '</highlighttext>', ''),
-            'date': item['published_at']
-        }
-        with open('hh_data.json', 'w', encoding='utf-8') as f:
-            json.dump(vacancies, f, indent=4, ensure_ascii=False)
+        try:
+            vacancies[item['id']] = {
+                'title': item['name'].lower(),
+                'url': item['alternate_url'],
+                'salary': item['salary'],
+                'description': str(item['snippet']['requirement']).replace('<highlighttext>', '').replace(
+                    '</highlighttext>', ''),
+                'date': item['published_at']
+            }
+            with open('hh_data.json', 'w', encoding='utf-8') as f:
+                json.dump(vacancies, f, indent=4, ensure_ascii=False)
+        except IndexError:
+            continue
 
 
 def get_sj_vacs(req_text: str, pages) -> None:
     vacancies = {}
-    sj = Superjob(req_text)
+    sj = Superjob(req_text, pages)
     res = sj.get_request(0)
     soup = BeautifulSoup(res.text, 'lxml')
     date = soup.find_all('div', class_='_8zbxf _3nFt9 _3bJZe')
