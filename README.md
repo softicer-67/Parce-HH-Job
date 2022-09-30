@@ -1,5 +1,7 @@
-> ### Парсер вакансий сайтов:        
+> ### Парсер вакансий сайтов:
+:snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake:
 
-:snake: _https://hh.ru_
+        https://hh.ru
 
-:snake: _https://russia.superjob.ru_
+        https://russia.superjob.ru
+:snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake::snake:
