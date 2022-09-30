@@ -1,4 +1,5 @@
-> Парсер вакансий с сайтов:
+> ### Парсер вакансий с сайтов:        
 
-        https://hh.ru
-        https://russia.superjob.ru
+:snake: _https://hh.ru_
+
+:snake: _https://russia.superjob.ru_
