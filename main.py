@@ -32,12 +32,12 @@ def main() -> None:
                 pages = int(input('Колличество вакансий: '))
                 get_sj_vacs(option, int(pages))
             case '6':
-                data1 = output_sj()
-                print('\n'.join(data1))
+                data = output_sj()
+                print('\n'.join(data))
                 print('-' * 150)
             case '7':
-                data1 = output_sj()
-                res = '\n'.join(data1)
+                data = output_sj()
+                res = '\n'.join(data)
                 res = '\n'.join(set(str(res).split('\n')))
                 print('\n'.join(sorted(res.split('\n')[:10], reverse=True)))
                 print('-' * 150)
