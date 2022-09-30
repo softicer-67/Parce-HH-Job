@@ -33,7 +33,8 @@ def get_sj_vacs(req_text: str, pages) -> None:
     desc = soup.find_all('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky')
     for i in range(2, pages):
         try:
-            vacancies[i] = {
+            id_ = title[i].a['href'][-13:-5:]
+            vacancies[id_] = {
                 'date': date[i].text,
                 'title': title[i].text,
                 'salary': salary[i].text.replace('\xa0', ' '),
