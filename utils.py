@@ -5,12 +5,6 @@ from bs4 import BeautifulSoup
 from classes import *
 
 
-def write_file(data: list) -> None:
-    with open('hh_data.json', 'w', encoding='utf-8') as f:
-        for dt in data:
-            json.dump(dt, f, indent=4, ensure_ascii=False)
-
-
 def get_hh_vacs(req_text: str, how_many: int) -> None:
     vacancies = {}
     current_data = json.loads(
