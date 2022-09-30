@@ -2,7 +2,7 @@ from utils import *
 
 
 def main() -> None:
-    data = None
+    data = ''
     while True:
         user_input = input(f'\n[1] - Парсить hh.ru\n[2] - Вывести все\n'
                            f'[3] - Сортировать по дате\n[4] - Вывести 10 последних\n\n'
