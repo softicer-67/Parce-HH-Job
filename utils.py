@@ -2,7 +2,7 @@ import json
 
 import requests
 from bs4 import BeautifulSoup
-from classes import HH, Superjob #, Vacancy
+from classes import *
 
 
 def write_file(data: list) -> None:
@@ -33,12 +33,14 @@ def get_sj_vacs(req_text: str, pages) -> None:
     sj = Superjob(req_text)
     res = sj.get_request(0)
     soup = BeautifulSoup(res.text, 'lxml')
+    date = soup.find_all('div', class_='_8zbxf _3nFt9 _3bJZe')
     title = soup.find_all('span', class_='_9fIP1 _249GZ _1jb_5 QLdOc')
     salary = soup.find_all('span', class_='_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi')
     desc = soup.find_all('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky')
     for i in range(2, pages):
         try:
             vacancies[i] = {
+                'date': date[i].text,
                 'title': title[i].text,
                 'salary': salary[i].text.replace('\xa0', ' '),
                 'url': 'http://russia.superjob.ru' + title[i].a['href'],
@@ -72,10 +74,8 @@ def output_sj() -> list:
         all_list = json.load(f)
     for k, v in all_list.items():
         try:
-            # date = v['date'][:10]
-            # date = f'{date[-2:]}-{date[5:7]}-{date[:4]}'
             vac_list_sj.append(
-                f"{v['title']} от {v['salary']} руб {v['url']} {v['desc'][:50]}...")
+                f"{v['date']} {v['title']} {v['salary']} {v['url']} {v['desc'][:50]}...")
         except TypeError:
             continue
     return vac_list_sj
