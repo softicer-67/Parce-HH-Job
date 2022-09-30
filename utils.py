@@ -63,14 +63,14 @@ def output_hh():
 
 
 def output_sj() -> list:
-    vac_list_sj = []
+    vac_list = []
     with open('sj_data.json', 'r', encoding='utf-8') as f:
         all_list = json.load(f)
     for k, v in all_list.items():
         try:
-            vac_list_sj.append(
+            vac_list.append(
                 f"{v['date']} {v['title']} {v['salary']} {v['url']} {v['desc'][:50]}...")
         except TypeError:
             continue
-    return vac_list_sj
+    return vac_list
 
