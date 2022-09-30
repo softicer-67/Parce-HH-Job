@@ -1,96 +1,83 @@
 import json
-from abc import ABC, abstractmethod
-from typing import Dict, Any
 
 import requests
-from bs4 import BeautifulSoup as bs
-from mypy.api import List
+from abc import ABC, abstractmethod
 
 
 class Engine(ABC):
-
     @abstractmethod
-    def get_request(self):
+    def get_request(self, page):
         pass
-
+      
 
 class HH(Engine):
-    def __init__(self, options=None, pages=0):
-        self.options = options
-        self.pages = pages
-
-    def get_request(self) -> dict:
-        hh_data: Dict[str, Any] = {}
-        for page in range(self.pages):
-            with open('hh_data.json', 'w', encoding='utf-8') as f:
-                json.dump(hh_data, f, indent=4, ensure_ascii=False)
-            try:
-                current_data = json.loads(
-                    requests.get(f"https://api.hh.ru/vacancies?text={self.options}&per_page={page}").text)
-                print(f'[+] Парсим hh.ru Please wait ... {page + 1}')
-
-                for i in range(page):
-                    for item in current_data['items']:
-                        hh_data[item['id']] = {
-                            'title': item['name'].lower(),
-                            'url': item['alternate_url'],
-                            'salary': item['salary'],
-                            'description': str(item['snippet']['requirement']).replace('<highlighttext>', '').replace(
-                                '</highlighttext>', ''),
-                            'date': item['published_at']
-                        }
-                with open('hh_data.json', 'w', encoding='utf-8') as f:
-                    json.dump(hh_data, f, indent=4, ensure_ascii=False)
-            except KeyError:
-                print(f'[+] Error')
-                break
-        return hh_data
-
-    @staticmethod
-    def load_file():
-        res = []
-        with open('hh_data.json', 'r', encoding='utf-8') as f:
-            top_10 = json.load(f)
-        for k, v in top_10.items():
-            try:
-                date = v['date'][:10]
-                date = f'{date[-2:]}-{date[5:7]}-{date[:4]}'
-                res.append(
-                    f"{date} {v['title']} от {v['salary']['from']} до "
-                    f"{v['salary']['to']} руб. {v['url']} {v['description'][:50]}...")
-            except TypeError:
-                continue
-        return '\n'.join(res)
+    def __init__(self, request_name, quantity):
+        self.name = request_name
+        self.iter = int(quantity / 100)
+        self.url = 'http://api.hh.ru/vacancies'
+        
+    def get_request(self, page_num):
+        par = {'text': self.name, 'page': page_num, 'per_page': 100, 'area': 113}
+        return requests.get(self.url, params=par)
 
 
 class Superjob(Engine):
-    def __init__(self, options: str, pages: int):
-        self.pages = pages
-        self.options = options
+    def __init__(self, request_name):
+        self.name = request_name
+        self.url = 'http://russia.superjob.ru/vacancy/search/'
 
-    def get_request(self) -> dict:
-        super_data = {}
-        for page in range(self.pages):
-            http = 'https://www.superjob.ru'
-            url = f'https://russia.superjob.ru/vacancy/search/?keywords={self.options}&page={page}'
-            print(f'[+] Парсим superjob.ru Please wait ... {page + 1}')
-            response = requests.get(url)
-            soup = bs(response.text, 'lxml')
-            title = soup.find_all('span', class_='_9fIP1 _249GZ _1jb_5 QLdOc')
-            salary = soup.find_all('span', class_='_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi')
-            desc = soup.find_all('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky')
-            for i in range(self.pages):
-                try:
-                    super_data[i] = {
-                            'title': title[i].text,
-                            'salary': salary[i].text.replace('\xa0', ' '),
-                            'url': http + title[i].a['href'],
-                            'desc': desc[i].text
-                        }
-                    with open('super_data.json', 'w', encoding='utf-8') as f:
-                        json.dump(super_data, f, indent=4, ensure_ascii=False)
-                except IndexError:
-                    continue
+    def get_request(self, page_num):
+        par = {'keywords': self.name, 'page': page_num}
+        return requests.get(self.url, params=par)
 
-        return super_data
+
+# class Vacancy:
+#     def __init__(self, data, hh=False):
+#         self.data = data
+#         self.hh = hh
+#         self.name = self.set_name()
+#         self.salary = self.set_salary()
+#         self.description = self.set_description()
+#         self.url = self.set_url()
+#
+#     def __repr__(self):
+#         return f'{self.name}|{self.description}|{self.url}|{self.salary}'
+#
+#     def set_name(self):
+#         if self.hh:
+#             return self.data['name']
+#         name = self.data.contents[3].text
+#         return name.replace(self.data.contents[3].contents[0].contents[1].text, '')
+#
+#     def set_salary(self):
+#         if self.hh:
+#             try:
+#                 salary = self.data['salary']['from']
+#                 return salary
+#             except:
+#                 return 0
+#         pattern = re.compile(r"\d+")
+#         salary = self.data.contents[3].contents[0].contents[1].text
+#         salary = ''.join(re.findall(pattern, salary))
+#         if salary:
+#             return int(salary)
+#         return 0
+#
+#     def set_description(self):
+#         if self.hh:
+#             if self.data['snippet']['requirement'] and self.data['snippet']['responsibility']:
+#                 return self.data['snippet']['requirement'] + self.data['snippet']['responsibility']
+#             else:
+#                 try:
+#                     return self.data['snippet']['requirement']
+#                 except:
+#                     return self.data['snippet']['responsibility']
+#         desc = self.data.contents[5].text
+#         return desc
+#
+#     def set_url(self):
+#         if self.hh:
+#             return self.data['alternate_url']
+#         link = self.data.contents[3].findAll('a')[0].attrs['href']
+#         return 'https://russia.superjob.ru' + link
 

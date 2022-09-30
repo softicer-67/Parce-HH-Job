@@ -1,51 +1,46 @@
-from typing import List
-
-from classes import HH, Superjob
+from utils import *
 
 
 def main() -> None:
     while True:
-        try:
-            res = []
-            res_2 = []
-            print(f'\n[1] - Парсить hh.ru:\n[2] - Вывод на экран:\n'
-                  f'[3] - Сортировка по дате:\n\n[4] - Парсить superjob.ru:\n'
-                  f'[5] - Вывод на экран:\n\n[6] - Сохранить в json и выйти')
-            user_input = input('\nЧто посмотрим?: \n')
-            if user_input == '1':
+        user_input = input(f'\n[1] - Парсить hh.ru\n[2] - Вывести все\n'
+                           f'[3] - Сортировать по дате\n[4] - Вывести 10 последних\n\n'
+                           f'[5] - Парсить superjob.ru\n[6] - Вывести все\n[7] - Вывести 10 последних\n\n'
+                           f'[8] - Сохранить в json и выйти\n')
+        match user_input:
+            case '1':
                 option = input('Введите слово для поиска вакансии: ')
                 pages = int(input('Колличество вакансий: '))
-                cls_1 = HH(option, pages)
-                cls_1.get_request()
-            elif user_input == '2':
-                file = cls_1.load_file()
-                print(file)
-            elif user_input == '3':
-               res.append(file.rstrip('\n'))
-               res = '\n'.join(res)
-               print('\n'.join(sorted(res.split('\n'), reverse=True)))
-
-            elif user_input == '4':
+                get_hh_vacs(option, int(pages))
+            case '2':
+                data = output_hh()
+                print('\n'.join(data))
+            case '3':
+                data = output_hh()
+                res = '\n'.join(data)
+                print('\n'.join(sorted(res.split('\n'), reverse=True)))
+                print('-' * 150)
+            case '4':
+                data = output_hh()
+                res = '\n'.join(data)
+                res = '\n'.join(set(str(res).split('\n')))
+                print('\n'.join(sorted(res.split('\n')[:10], reverse=True)))
+                print('-' * 150)
+            case '5':
                 option = input('Введите слово для поиска вакансии: ')
-                pages = int(input('Колличество вакансий: \n'))
-                cls_2 = Superjob(option, pages)
-                file = cls_2.get_request()
-            elif user_input == '5':
-                for k, v in file.items():
-                    try:
-                        res_2.append(
-                            f"{v['title']} от {v['salary']} руб {v['url']} {v['desc'][:50]}...")
-                    except TypeError:
-                        continue
-                res_2 = str(res_2).rstrip('\n')
-                print('\n'.join(res_2.split(', ')).replace('[', '').replace(']', '').replace("'", ''))
-
-            elif user_input == '6':
-                print('Выход')
+                pages = int(input('Колличество вакансий: '))
+                get_sj_vacs(option, int(pages))
+            case '6':
+                data1 = output_sj()
+                print('\n'.join(data1))
+            case '7':
+                data1 = output_sj()
+                res = '\n'.join(data1)
+                res = '\n'.join(set(str(res).split('\n')))
+                print('\n'.join(sorted(res.split('\n')[:10], reverse=True)))
+                print('-' * 150)
+            case _:
                 break
-        except Exception:
-            continue
-    exit('Досвидания')
 
 
 if __name__ == '__main__':
