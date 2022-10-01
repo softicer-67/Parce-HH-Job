@@ -7,20 +7,17 @@ def get_hh_vacs(req_text: str, how_many: int) -> None:
     current_data = json.loads(
             requests.get(f"https://api.hh.ru/vacancies?text={req_text}&per_page={how_many}").text)
     for item in current_data['items']:
-        try:
-            vacancies[item['id']] = {
-                'title': item['name'].lower(),
-                'url': item['alternate_url'],
-                'salary': item['salary'],
-                'description': str(item['snippet']['requirement']).replace('<highlighttext>', '').replace(
-                    '</highlighttext>', ''),
-                'date': item['published_at']
-            }
-            name = 'hh_data.json'
-            data = Vacancy(name, vacancies)
-            data.write_file()
-        except IndexError:
-            continue
+        vacancies[item['id']] = {
+            'title': item['name'].lower(),
+            'url': item['alternate_url'],
+            'salary': item['salary'],
+            'description': str(item['snippet']['requirement']).replace('<highlighttext>', '').replace(
+                '</highlighttext>', ''),
+            'date': item['published_at']
+        }
+        name = 'hh_data.json'
+        data = Vacancy(name, vacancies)
+        data.write_file()
 
 
 def get_sj_vacs(req_text: str, pages) -> None:
@@ -32,8 +29,8 @@ def get_sj_vacs(req_text: str, pages) -> None:
     title = soup.find_all('span', class_='_9fIP1 _249GZ _1jb_5 QLdOc')
     salary = soup.find_all('span', class_='_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi')
     desc = soup.find_all('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky')
-    for i in range(2, pages):
-        try:
+    try:
+        for i in range(2, pages):
             id_ = title[i].a['href'][-13:-5:]
             vacancies[id_] = {
                 'date': date[i].text,
@@ -42,11 +39,11 @@ def get_sj_vacs(req_text: str, pages) -> None:
                 'url': 'http://russia.superjob.ru' + title[i].a['href'],
                 'desc': desc[i].text
             }
-            name = 'sj_data.json'
-            data = Vacancy(name, vacancies)
-            data.write_file()
-        except IndexError:
-            continue
+    except IndexError:
+        pass
+    name = 'sj_data.json'
+    data = Vacancy(name, vacancies)
+    data.write_file()
 
 
 def output_hh():

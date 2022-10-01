@@ -4,7 +4,7 @@ from utils import *
 def main() -> None:
     data = ''
     while True:
-        user_input = input(f'\n[1] - Парсить hh.ru\n[2] - Вывести все\n'
+        user_input = input(f'\n[1] - Парсить hh.ru (max = 100)\n[2] - Вывести все\n'
                            f'[3] - Сортировать по дате\n[4] - Вывести 10 последних\n\n'
                            f'[5] - Парсить superjob.ru\n[6] - Вывести все\n[7] - Сортировать по дате\n'
                            f'[8] - Вывести 10 последних\n\n[9] - Сохранить в json и выйти\n')
@@ -13,6 +13,9 @@ def main() -> None:
             case '1':
                 option = input('Введите слово для поиска вакансии hh: ')
                 pages = int(input('Колличество вакансий: '))
+                if pages > 100:
+                    print('максимальное число 100')
+                    continue
                 get_hh_vacs(option, int(pages))
                 data = output_hh()
             case '2':
