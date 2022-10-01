@@ -3,7 +3,7 @@ from classes import *
 
 
 def get_hh_vacs(req_text: str, how_many: int) -> None:
-    vacancies = {}
+    vacancies: dict = {}
     current_data = json.loads(
             requests.get(f"https://api.hh.ru/vacancies?text={req_text}&per_page={how_many}").text)
     for item in current_data['items']:
@@ -16,8 +16,9 @@ def get_hh_vacs(req_text: str, how_many: int) -> None:
                     '</highlighttext>', ''),
                 'date': item['published_at']
             }
-            with open('hh_data.json', 'w', encoding='utf-8') as f:
-                json.dump(vacancies, f, indent=4, ensure_ascii=False)
+            name = 'hh_data.json'
+            data = Vacancy(name, vacancies)
+            data.write_file()
         except IndexError:
             continue
 
@@ -41,8 +42,9 @@ def get_sj_vacs(req_text: str, pages) -> None:
                 'url': 'http://russia.superjob.ru' + title[i].a['href'],
                 'desc': desc[i].text
             }
-            with open('sj_data.json', 'w', encoding='utf-8') as f:
-                json.dump(vacancies, f, indent=4, ensure_ascii=False)
+            name = 'sj_data.json'
+            data = Vacancy(name, vacancies)
+            data.write_file()
         except IndexError:
             continue
 
@@ -53,10 +55,8 @@ def output_hh():
         all_list = json.load(file)
     for k, v in all_list.items():
         try:
-            date = v['date'][:10]
-            date = f'{date[-2:]}-{date[5:7]}-{date[:4]}'
             vac_list.append(
-                f"{date} {v['title']} от {v['salary']['from']} до "
+                f"{v['date'][:10]} {v['title']} от {v['salary']['from']} до "
                 f"{v['salary']['to']} руб. {v['url']} {v['description'][:50]}...")
         except TypeError:
             continue
@@ -74,4 +74,3 @@ def output_sj() -> list:
         except TypeError:
             continue
     return vac_list
-
